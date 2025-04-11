@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Participants Weezevent</title>
+    {# Assurez-vous que le lien vers style.css est correct #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        // Fonction JS pour désactiver bouton MAJ (inchangé)
+        function handleUpdateClick(button) {
+            button.disabled = true;
+            button.innerText = 'Maj...';
+            // Vous pourriez vouloir ajouter ici un indicateur visuel plus clair
+            return true; // Permet au formulaire de s'envoyer
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Conteneur Haut Gauche (inchangé) -->
+        <div class="top-left-controls">
+            {% if session.logged_in or current_user.is_authenticated %} {# Adaptez selon votre gestion de session #}
+            <div class="user-info">
+                <span>Utilisateur : {{ username }}</span> {# username est passé depuis app.py #}
+                <a href="{{ url_for('logout') }}">Déconnexion</a>
+            </div>
+            {% endif %}
+            <div class="update-section">
+                {# Assurez-vous que la route 'launch_background_update' existe #}
+                <form action="{{ url_for('launch_background_update') }}" method="post" onsubmit="return handleUpdateClick(this.querySelector('button'))">
+                    <button type="submit" class="button-update" title="Mettre à jour les données Weezevent en arrière-plan">
+                        MAJ Données
+                    </button>
+                </form>
+                {# <p class="update-help-text">Cliquez pour rafraîchir les données depuis Weezevent.</p> #}
+            </div>
+        </div>
+
+        <h1>Gestion des Participants Weezevent</h1>
+
+        <!-- Messages Flash (inchangé) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Formulaire Sélection Événement (inchangé) -->
+        <form method="post" id="select-event-form">
+            <label for="event_id">Sélectionner un événement :</label>
+            <select name="event_id" id="event_id">
+                <option value="">-- Choisissez un événement --</option>
+                {% for event in events %}
+                    <option value="{{ event.event_id }}" {% if event.event_id == selected_event_id %}selected{% endif %}>
+                        {# Utilise les clés préparées dans app.py (nom et date_display) #}
+                        {{ event.nom }} ({{ event.date_display }})
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Afficher les Participants</button>
+        </form>
+
+        <!-- Affichage Table Participants (MODIFIÉ) -->
+        {% if selected_event_id is not none %}
+            <h2>Participants inscrits</h2>
+            {# Lien export placé avant le tableau pour meilleure visibilité si tableau long #}
+            <div class="export-container" style="margin-bottom: 15px; text-align: right;">
+                 <a href="{{ url_for('export_participants') }}" class="export-link">Exporter la liste (CSV)</a>
+            </div>
+
+            <div style="overflow-x: auto; margin-bottom: 20px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Date Naissance</th>
+                            <th>Adresse</th>
+                            <th>CP</th>
+                            <th>Ville</th>
+                            <th>Date Inscrip.</th>
+                            <th>Source Info</th> {# Ajusté titre pour correspondre à export #}
+                            <th>Financ. Élig.</th>
+                            <th>RQTH</th>
+                            <th>Aménag. Nécess.</th>
+                            {# Colonne ajoutée si besoin détails aménagements #}
+                            <th>Détails Aménag.</th>
+                            <th>Type Billet</th> {# Nom du billet Weezevent #}
+                            <th>Montant Payé</th> {# Montant transaction #}
+                            <th>Code Promo Utilisé ?</th> {# Titre clair Oui/Non #}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if participants %}
+                            {% for participant in participants %}
+                                <tr>
+                                    {# *** MODIFICATION : Utiliser directement les clés préparées dans app.py *** #}
+                                    {# Celles-ci contiennent déjà "Non renseigné" si nécessaire #}
+                                    <td>{{ participant.nom }}</td>
+                                    <td>{{ participant.prenom }}</td>
+                                    <td>{{ participant.email }}</td>
+                                    <td>{{ participant.telephone }}</td>
+                                    <td>{{ participant.date_naissance_display }}</td> {# Clé date formatée #}
+                                    <td>{{ participant.adresse }}</td>
+                                    <td>{{ participant.code_postal }}</td>
+                                    <td>{{ participant.ville }}</td>
+                                    <td>{{ participant.date_creation_display }}</td> {# Clé date/heure formatée #}
+                                    <td>{{ participant.source_info }}</td>
+                                    <td>{{ participant.financement_eligible }}</td>
+                                    <td>{{ participant.rqth }}</td>
+                                    <td>{{ participant.amenagements_necessaires }}</td>
+                                    <td>{{ participant.amenagements_details }}</td> {# Affiche placeholder ou vide si pas nécessaire #}
+                                    <td>{{ participant.nom_billet }}</td>
+                                    {# Montant: Appliquer formatage ',' si ce n'est pas "Non renseigné" #}
+                                    <td>{{ participant.montant_paye_display | replace('.', ',') if participant.montant_paye_display != 'Non renseigné' else 'Non renseigné' }}</td>
+                                    {# Code Promo: Afficher directement "Oui" ou "Non" préparé #}
+                                    <td>{{ participant.code_promo_display }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            {# *** MODIFICATION : Colspan ajusté à 17 colonnes *** #}
+                            <tr>
+                                <td colspan="17" class="no-participants-message">
+                                    Aucun participant trouvé pour cet événement dans la base de données.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            {# Lien export peut aussi être mis ici #}
+            {# <a href="{{ url_for('export_participants') }}" class="export-link">Exporter la liste (CSV)</a> #}
+
+        {% elif request.method == 'POST' %}
+             {# Message si aucun event sélectionné après POST (inchangé) #}
+             <p style="text-align:center; margin-top:20px; color: #6c757d;">Veuillez sélectionner un événement valide pour afficher les participants.</p>
+        {% endif %}
+
+    </div>
+
+    {# Vous pourriez ajouter un pied de page ou d'autres éléments ici #}
+
+</body>
+</html>

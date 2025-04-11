@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Rafraîchit toutes les 10 secondes vers la route de vérification de statut -->
+    <meta http-equiv="refresh" content="10;url={{ url_for('show_maintenance') }}">
+    <title>Récuperation en cours</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Pas besoin de style inline ici car tout est dans style.css -->
+</head>
+<!-- Ajout de la classe pour que les styles spécifiques s'appliquent -->
+<body class="maintenance-page">
+    <!-- Utilisation de la structure définie dans style.css -->
+    <div class="maintenance-box">
+        <!-- Spinner défini dans style.css -->
+        <div class="spinner"></div>
+        <h1>Récuperation des informations depuis la base de données</h1>
+        <p>
+            Récupération des dernières données depuis Weezevent.
+            Cette opération peut prendre quelques instants.
+        </p>
+        <p>
+            Vous serez redirigé automatiquement une fois l'opération terminée.
+        </p>
+        <small>(Merci de patientez)</small>
+    </div>
+</body>
+</html>

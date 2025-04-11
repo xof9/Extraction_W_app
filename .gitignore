@@ -1,0 +1,26 @@
+# Fichiers Python temporaires
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environnement virtuel
+venv/
+*.venv/
+env/
+.env
+
+# Fichiers secrets et config locale
+.env
+instance/
+
+# Fichiers journaux
+*.log
+
+# Fichiers OS
+.DS_Store
+Thumbs.db
+
+# Fichiers IDE
+.idea/
+.vscode/

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Gestion Weezevent</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Pas de style inline nécessaire, tout est dans style.css -->
+</head>
+<body>
+    <div class="container"> {# Utilisation du container général #}
+        <h1>Connexion</h1>
+
+        <!-- Bloc pour afficher les messages Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Affichage spécifique si l'utilisateur est verrouillé -->
+        {% if locked_out %}
+            <div id="timer-container"> {# Utilise le style existant #}
+                <p>Trop de tentatives. Compte temporairement verrouillé.</p>
+                <p>
+                    Réessayez dans <span id="lockout-timer">{{ remaining_time // 60 }}:{{ '%02d'|format(remaining_time % 60) }}</span>.
+                </p>
+                {# Ce message sera affiché par JS quand le timer expire AVANT le rechargement #}
+                <p id="lockout-expired-message" style="display: none;">
+                    Le temps est écoulé. Rechargement en cours...
+                </p>
+            </div>
+
+            <!-- JavaScript pour le compte à rebours dynamique -->
+            <script>
+                let secondsLeft = { remaining_time };
+                const timerDisplay = document.getElementById('lockout-timer');
+                const expiredMessage = document.getElementById('lockout-expired-message');
+                // Cible le formulaire pour le griser
+                const loginForm = document.querySelector('.login-form');
+                if (loginForm) {
+                    loginForm.classList.add('locked'); // Applique la classe pour l'effet visuel
+                }
+
+                function formatTime(seconds) {
+                    const minutes = Math.floor(seconds / 60);
+                    const remainingSeconds = seconds % 60;
+                    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+                    return `${minutes}:${formattedSeconds}`;
+                }
+
+                function updateCountdown() {
+                    if (secondsLeft >= 0 && timerDisplay) {
+                        timerDisplay.textContent = formatTime(secondsLeft);
+                    }
+
+                    if (secondsLeft <= 0) {
+                        clearInterval(timerInterval);
+                        if (timerDisplay) timerDisplay.style.display = 'none'; // Cache le timer 00:00
+                        if (expiredMessage) expiredMessage.style.display = 'block'; // Affiche message de fin
+
+                        // Attend une seconde avant de recharger pour que l'utilisateur voie le message
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1200); // 1.2 secondes de délai
+                    } else {
+                        secondsLeft--;
+                    }
+                }
+                // Appel initial
+                if (timerDisplay) {
+                    updateCountdown();
+                }
+                // Démarrer le timer
+                const timerInterval = setInterval(updateCountdown, 1000);
+
+            </script>
+
+        {% endif %} {# Fin du if locked_out #}
+
+
+        <!-- Formulaire de connexion -->
+        <!-- Ajout de la classe 'locked' par JS si verrouillé -->
+        <form method="post" class="login-form" {% if locked_out %}aria-hidden="true"{% endif %}>
+             {# Le style 'locked' est appliqué via JS ci-dessus si locked_out est true #}
+            <div>
+                <label for="username">Nom d'utilisateur :</label>
+                <input type="text" id="username" name="username" required autofocus {% if locked_out %}disabled{% endif %}>
+            </div>
+
+            <div>
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" required {% if locked_out %}disabled{% endif %}>
+            </div>
+
+            <button type="submit" {% if locked_out %}disabled{% endif %}>Se connecter</button>
+        </form>
+
+        <!-- Afficher les tentatives restantes si NON verrouillé -->
+        {% if not locked_out %}
+            {% if remaining_attempts is defined and remaining_attempts < 5 %} {# Ajustez 5 si MAX_LOGIN_ATTEMPTS est différent #}
+                 <p class="remaining-attempts-info">
+                     {% if remaining_attempts > 1 %}
+                        Il vous reste {{ remaining_attempts }} tentatives.
+                     {% elif remaining_attempts == 1 %}
+                        Il vous reste 1 tentative.
+                     {% else %}
+                         <!-- Normalement on ne devrait pas arriver à 0 ici sans être verrouillé -->
+                        Attention, dernière tentative !
+                     {% endif %}
+                 </p>
+            {% endif %}
+        {% endif %}
+
+    </div> {# Fin .container #}
+</body>
+</html>

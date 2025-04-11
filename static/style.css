@@ -1,0 +1,606 @@
+/* static/style.css - Version Complète avec Contrôles en Haut à Gauche et Styles Minuteur Login */
+
+/* ======================================== */
+/*          Styles Généraux & Body         */
+/* ======================================== */
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Police moderne */
+    background-color: #f8f9fa; /* Fond légèrement différent */
+    color: #343a40; /* Texte principal plus sombre */
+    line-height: 1.6;
+    font-size: 16px; /* Taille de base */
+}
+
+/* ======================================== */
+/*          Conteneur Principal            */
+/* ======================================== */
+
+.container {
+    width: 95%; /* Légèrement plus large */
+    max-width: 1400px; /* Augmenter pour les grands écrans */
+    margin: 30px auto;
+    padding: 30px 40px;
+    background-color: #ffffff; /* Fond blanc */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Ombre subtile */
+    border-radius: 10px; /* Coins plus arrondis */
+    position: relative; /* ESSENTIEL pour positionner .top-left-controls */
+    overflow-x: auto; /* Garder le défilement horizontal pour les tables */
+    /* Ajouter de l'espace en haut pour les éléments positionnés */
+    padding-top: 80px;
+}
+
+/* ======================================== */
+/*               Titres (H1, H2)           */
+/* ======================================== */
+
+h1 {
+    text-align: center;
+    color: #212529; /* Noir doux */
+    margin-bottom: 40px;
+    font-size: 2.3em;
+    font-weight: 600;
+    /* Marge haute ajustée pour l'espace créé par padding-top du container */
+    margin-top: 0;
+}
+
+h2 { /* Ex: "Participants inscrits" */
+    margin-top: 45px;
+    margin-bottom: 25px;
+    text-align: center;
+    color: #495057; /* Gris foncé */
+    border-bottom: 2px solid #dee2e6; /* Ligne de séparation plus marquée */
+    padding-bottom: 15px;
+    font-size: 1.8em;
+    font-weight: 500;
+}
+
+/* ======================================== */
+/*      Styles Spécifiques Page Login      */
+/* ======================================== */
+
+/* Cibler le formulaire de connexion via sa classe */
+.login-form {
+    max-width: 450px; /* Garder une largeur raisonnable */
+    margin: 40px auto; /* Centrer le formulaire */
+    padding: 35px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+    transition: opacity 0.3s ease; /* Ajouter une transition pour le verrouillage */
+}
+
+/* Styles pour les éléments DANS .login-form */
+.login-form div {
+    margin-bottom: 20px; /* Espace entre les groupes label/input */
+}
+.login-form div:last-of-type {
+    margin-bottom: 25px; /* Espace avant le bouton */
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+.login-form button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1.1em;
+    background-color: rgb(86, 18, 234); /* Bleu connexion */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.login-form button[type="submit"]:hover:not([disabled]) { /* Ne pas changer si désactivé */
+    background-color: #252978;
+}
+
+.login-form button[type="submit"]:disabled {
+    background-color: #adb5bd; /* Gris quand désactivé */
+    cursor: not-allowed;
+}
+
+/* Style pour le texte des tentatives restantes */
+.remaining-attempts-info {
+   text-align: center;
+   color: #6c757d; /* Gris */
+   margin-top: -10px; /* Rapprocher */
+   margin-bottom: 20px;
+   font-size: 0.9em;
+}
+
+/* Pour désactiver visuellement le formulaire pendant le verrouillage */
+.login-form.locked {
+    opacity: 0.6; /* Rendre plus pâle */
+    pointer-events: none; /* Empêcher les clics */
+}
+
+/* ======================================== */
+/*          Messages d'Erreur/Flash (Discret) */
+/* ======================================== */
+
+.flash-message {
+    padding: 10px 15px; /* Padding réduit */
+    margin: 15px auto; /* Marge verticale réduite, centré */
+    border: 1px solid transparent;
+    border-radius: 6px;
+    text-align: center;
+    max-width: 85%; /* Limite la largeur, mais assez large */
+    font-size: 0.95em; /* Taille de police légèrement réduite */
+    font-weight: 500;
+    box-shadow: none; /* Pas d'ombre */
+    word-wrap: break-word; /* Permettre le retour à la ligne */
+}
+
+/* Couleurs spécifiques */
+.flash-message.danger, .error { /* .error pour erreurs directes non-flash */
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+.flash-message.success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.flash-message.warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+.flash-message.info {
+    color: #004085; /* Bleu foncé */
+    background-color: #cce5ff; /* Bleu pâle */
+    border-color: #b8daff; /* Bordure bleu pâle */
+}
+
+
+/* ======================================== */
+/*      Minuteur Verrouillage (Login)      */
+/* ======================================== */
+
+#timer-container {
+    text-align: center;
+    margin: 30px auto; /* Espacement autour du bloc */
+    padding: 15px 20px;
+    border: 1px dashed #f5c6cb; /* Bordure discrète */
+    border-radius: 6px;
+    background-color: #fef7f7; /* Fond très pâle */
+    max-width: 500px;
+}
+#timer-container p {
+    font-size: 1em; /* Taille normale */
+    margin-bottom: 8px;
+    color: #58151c; /* Texte un peu plus sombre */
+}
+#timer-container p:last-child {
+    margin-bottom: 0;
+}
+
+/* Style pour le span contenant le timer formaté MM:SS */
+#lockout-timer {
+    display: inline-block; /* Comportement bloc mais en ligne */
+    font-weight: bold;
+    color: #721c24; /* Couleur texte du danger (rouge foncé) */
+    background-color: #f8d7da; /* Fond danger pâle */
+    padding: 3px 8px; /* Un peu plus de padding horizontal */
+    margin: 0 4px;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb; /* Bordure danger */
+    font-family: 'Courier New', Courier, monospace; /* Police à chasse fixe pour la stabilité */
+    min-width: 50px; /* Espace pour MM:SS */
+    text-align: center;
+}
+
+
+#timer.timer-expired { /* Style si jamais on remet l'ancien id 'timer' */
+    color: #155724; /* Vert */
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    font-weight: normal;
+}
+
+/* Message qui apparaît une fois le timer expiré */
+#lockout-expired-message {
+    margin-top: 15px; /* Espace au-dessus */
+    font-weight: bold;
+    color: #155724; /* Couleur succès (vert) */
+}
+
+/* Style pour le lien 'rafraîchir' (si utilisé) */
+#lockout-expired-message a {
+    color: #0056b3; /* Bleu lien standard */
+    text-decoration: underline;
+}
+
+#lockout-expired-message a:hover {
+    color: #003d80;
+}
+
+
+/* Animation optionnelle (peut être supprimée si non voulue) */
+@keyframes timerTickAnimation {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+/* Appliquer l'animation si on ajoute la classe 'timer-tick' via JS */
+#lockout-timer.timer-tick {
+  animation: timerTickAnimation 0.5s ease-in-out 1;
+}
+
+/* ======================================== */
+/* CONTENEUR POUR CONTROLES HAUT GAUCHE (MODIFIÉ) */
+/* ======================================== */
+.top-left-controls {  /* Nom de classe changé */
+    position: absolute;
+    top: 20px;         /* Distance du haut */
+    left: 30px;        /* Distance de la GAUCHE */
+    display: flex;       /* Utiliser Flexbox */
+    align-items: center; /* Centrer verticalement */
+    gap: 15px;           /* Espace entre les éléments */
+    z-index: 10;         /* S'assurer qu'il est au-dessus */
+}
+
+/* ======================================== */
+/* Style pour le nom d'utilisateur et lien logout */
+/* ======================================== */
+
+.user-info {
+    /* PAS de positionnement absolu ici */
+    font-size: 0.95em;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    white-space: nowrap; /* Empêche retour à la ligne du nom */
+}
+
+.user-info span {
+    font-weight: 600;
+    margin-right: 12px;
+    color: #343a40;
+}
+
+.user-info a {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 4px 8px;
+    border: 1px solid #dc3545;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.user-info a:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* ======================================== */
+/* Section Mise à Jour Arrière-Plan */
+/* ======================================== */
+
+.update-section {
+    /* PAS de positionnement absolu ici */
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+}
+
+.update-section form {
+    display: inline-block;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    margin: 0;
+    vertical-align: middle; /* Aide à aligner verticalement avec le texte user-info */
+}
+
+/* Bouton de mise à jour (Taille Moyenne et Orange) */
+.button-update {
+    padding: 7px 14px;
+    font-size: 0.9em;
+    background-color: #fd7e14; /* Orange */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500; /* Moyen */
+    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: none;
+    white-space: nowrap;
+    line-height: 1; /* Stabiliser hauteur */
+}
+
+.button-update:hover {
+    background-color: #e66a04; /* Orange foncé */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.button-update:active {
+     transform: translateY(1px);
+     background-color: #cf5f00;
+     box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+}
+
+.button-update:disabled {
+    background-color: #adb5bd;
+    color: #e9ecef;
+    cursor: wait;
+    opacity: 0.7;
+    box-shadow: none;
+}
+
+/* Cacher le texte d'aide */
+.update-help-text {
+    display: none;
+}
+
+
+/* ======================================== */
+/*      Styles Page Select Event           */
+/* ======================================== */
+
+/* Formulaire de sélection d'événement */
+form#select-event-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 15px 20px;
+    margin-bottom: 40px;
+    margin-top: 30px; /* Marge haute pour espacer du H1 et des contrôles */
+    padding: 20px 25px;
+    background-color: #f1f3f5;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+form#select-event-form label {
+    margin-bottom: 0;
+    font-weight: 500;
+    color: #495057;
+}
+
+form#select-event-form select {
+    width: auto;
+    min-width: 300px;
+    max-width: 500px;
+    padding: 10px 15px;
+    font-size: 1em;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: white;
+    box-sizing: border-box;
+    flex-grow: 1;
+}
+
+form#select-event-form button {
+    padding: 10px 25px;
+    font-size: 1em;
+    background-color: #6f42c1; /* Violet */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+form#select-event-form button:hover {
+    background-color: #5a32a3;
+}
+
+
+/* ======================================== */
+/*          Styles Tableau Participants    */
+/* ======================================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.95em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden; /* Important pour que le radius s'applique aux coins de la table */
+}
+
+thead th {
+    padding: 14px 16px;
+    text-align: left;
+    background-color: #e9ecef;
+    font-weight: 600;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+/* Coins arrondis pour le header de la table */
+thead tr th:first-child {
+    border-top-left-radius: 8px;
+}
+thead tr th:last-child {
+    border-top-right-radius: 8px;
+}
+
+tbody td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #f1f3f5;
+    vertical-align: middle;
+    word-wrap: break-word; /* Permettre le retour à la ligne si nécessaire */
+    overflow-wrap: break-word; /* Alternative moderne */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+/* Coins arrondis pour la dernière ligne du tbody */
+tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+/* Supprimer la bordure du bas sur la dernière ligne */
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* Message "Aucun participant" */
+.no-participants-message {
+    text-align: center !important;
+    font-style: italic;
+    color: #6c757d;
+    padding: 30px 15px !important;
+    background-color: #f8f9fa;
+}
+
+/* Coins arrondis pour la ligne "aucun participant" si elle est la seule */
+tbody tr:only-child td {
+   border-bottom-left-radius: 8px;
+   border-bottom-right-radius: 8px;
+}
+
+
+/* ======================================== */
+/*           Bouton Export Excel/CSV       */
+/* ======================================== */
+
+a.export-link {
+    display: block;
+    width: fit-content;
+    margin: 40px auto 20px auto;
+    padding: 12px 30px;
+    background-color: #198754; /* Vert */
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.05em;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+a.export-link:hover {
+    background-color: #157347;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    text-decoration: none;
+}
+
+a.export-link:active {
+   background-color: #105a36;
+   box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* ======================================== */
+/*      Styles Page Maintenance            */
+/* ======================================== */
+
+/* Appliquer ces styles UNIQUEMENT si le body a la classe 'maintenance-page' */
+body.maintenance-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 95vh; /* Assure le centrage vertical sur la plupart des écrans */
+    padding: 20px; /* Garder le padding */
+    background-color: #f8f9fa; /* Utiliser le fond général de l'app */
+}
+
+/* La boîte centrale de la page maintenance */
+.maintenance-box {
+    background-color: #ffffff; /* Fond blanc comme le container principal */
+    padding: 40px 50px;
+    border-radius: 10px; /* Matcher le border-radius du container */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Matcher l'ombre du container */
+    text-align: center;
+    max-width: 550px; /* Légèrement plus large si besoin */
+    /* Utiliser la couleur 'warning' pour la bordure supérieure */
+    border-top: 5px solid rgb(86, 18, 234); /* CORRIGÉ : Utiliser la couleur du bouton de connexion */
+    width: 90%; /* Assurer une largeur responsive */
+}
+
+/* Titre dans la boîte maintenance */
+.maintenance-box h1 {
+    font-size: 2em; /* Ajuster la taille si besoin */
+    color: #212529; /* Matcher le H1 principal */
+    margin-bottom: 20px;
+    font-weight: 600; /* Matcher le H1 principal */
+}
+
+/* Paragraphes dans la boîte maintenance */
+.maintenance-box p {
+    font-size: 1.1em;
+    color: #495057; /* Texte gris foncé */
+    margin-bottom: 15px;
+    line-height: 1.7; /* Améliorer lisibilité */
+}
+.maintenance-box p:last-of-type {
+     margin-bottom: 30px; /* Plus d'espace avant le petit texte */
+}
+
+
+/* Texte 'small' dans la boîte maintenance */
+.maintenance-box small {
+    font-size: 0.9em;
+    color: #6c757d; /* Gris plus clair */
+}
+
+/* Spinner d'animation */
+.spinner {
+    display: block; /* Assurer qu'il est centré par margin:auto */
+    border: 5px solid #f1f3f5; /* Piste gris très clair */
+    /* Utiliser la couleur 'warning' pour la partie active */
+    border-top: 5px solid rgb(86, 18, 234); /* CORRIGÉ : Utiliser la couleur du bouton de connexion */
+    border-radius: 50%;
+    width: 45px; /* Légèrement plus grand */
+    height: 45px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 25px auto; /* Espacement */
+}
+
+/* Définition de l'animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ======================================== */
+/*      Fin Styles Page Maintenance        */
+/* ======================================== */
